@@ -1,4 +1,4 @@
-package com.saam.testetecnicoswing.config;
+package com.saam.testetecnicoswing.exception;
 
 /**
  *

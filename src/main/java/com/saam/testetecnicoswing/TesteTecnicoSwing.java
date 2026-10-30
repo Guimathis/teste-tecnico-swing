@@ -1,6 +1,6 @@
 package com.saam.testetecnicoswing;
 
-import com.saam.testetecnicoswing.config.DatabaseException;
+import com.saam.testetecnicoswing.exception.DatabaseException;
 import com.saam.testetecnicoswing.config.DatabaseInitializer;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -18,10 +18,10 @@ public class TesteTecnicoSwing {
                 System.out.println("Banco de dados PostgreSQL conectado e inicializado com sucesso!");
             } catch (DatabaseException ex) {
                 JOptionPane.showMessageDialog(
-                    null,
-                    ex.getMessage(),
-                    "Erro de Conexão com o Banco de Dados",
-                    JOptionPane.ERROR_MESSAGE
+                        null,
+                        ex.getMessage(),
+                        "Erro de Conexão com o Banco de Dados",
+                        JOptionPane.ERROR_MESSAGE
                 );
             }
         });
