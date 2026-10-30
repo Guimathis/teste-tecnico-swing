@@ -1,0 +1,21 @@
+# Maven / Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# NetBeans / IDEs
+nbactions.xml
+nb-configuration.xml
+nbproject/private/
+.idea/
+.vscode/
+*.iml
+
+# OS / Docker local volumes
+.DS_Store
+Thumbs.db
+pgdata/
+
