@@ -4,7 +4,9 @@ import com.saam.testetecnicoswing.config.DatabaseInitializer;
 import com.saam.testetecnicoswing.dao.UsuarioDAO;
 import com.saam.testetecnicoswing.model.Usuario;
 import com.saam.testetecnicoswing.util.PasswordUtils;
+import com.saam.testetecnicoswing.util.SessionManager;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,21 +26,30 @@ class AuthControllerTest {
         DatabaseInitializer.initialize();
     }
 
+    @AfterEach
+    void tearDown() {
+        SessionManager.logout();
+    }
+
     @Test
-    void shouldRegisterUserWithSha256AndAuthenticateSuccessfully() {
+    void shouldRegisterUserWithSha256AndAuthenticateMaintainingSession() {
         String email = "auth_" + UUID.randomUUID() + "@saam.com.br";
         Usuario cadastrado = authController.cadastrar("Carlos Souza", email, "MinhaSenha@2026");
 
         assertNotNull(cadastrado.getId());
         assertEquals(PasswordUtils.hashSha256("MinhaSenha@2026"), cadastrado.getSenha());
-        assertNotEquals("MinhaSenha@2026", cadastrado.getSenha());
+        assertFalse(SessionManager.isAutenticado());
 
         try {
             Usuario autenticado = authController.autenticar(email, "MinhaSenha@2026");
             assertEquals(cadastrado.getId(), autenticado.getId());
-            assertEquals("Carlos Souza", autenticado.getNome());
+            assertTrue(SessionManager.isAutenticado());
+            assertEquals("Carlos Souza", SessionManager.getUsuarioLogado().getNome());
 
-            // Senha incorreta deve falhar
+            authController.logout();
+            assertFalse(SessionManager.isAutenticado());
+            assertNull(SessionManager.getUsuarioLogado());
+
             assertThrows(IllegalArgumentException.class,
                 () -> authController.autenticar(email, "SenhaErrada"));
         } finally {

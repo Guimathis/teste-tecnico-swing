@@ -56,7 +56,7 @@ public final class ValidationUtils {
     }
 
     public static LocalDate parseData(String dataStr) {
-        if (dataStr == null || dataStr.isBlank()) {
+        if (dataStr == null || dataStr.isBlank() || dataStr.replace("/", "").replace("_", "").trim().isEmpty()) {
             throw new IllegalArgumentException("A data de admissão é obrigatória.");
         }
         String trimmed = dataStr.trim();

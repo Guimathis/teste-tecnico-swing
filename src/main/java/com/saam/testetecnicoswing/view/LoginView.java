@@ -118,7 +118,8 @@ public class LoginView extends javax.swing.JFrame {
                 "Login Realizado",
                 JOptionPane.INFORMATION_MESSAGE
             );
-            // Na Etapa 04, aqui sera aberta a tela FuncionarioView
+            new FuncionarioView().setVisible(true);
+            dispose();
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(
                 this,
