@@ -63,4 +63,40 @@ class AuthControllerTest {
         assertThrows(IllegalArgumentException.class,
             () -> authController.cadastrar("", "invalido", ""));
     }
+
+    @Test
+    void shouldFailRegistrationWhenEmailAlreadyExists() {
+        String email = "dup_" + UUID.randomUUID() + "@saam.com.br";
+        Usuario criado = authController.cadastrar("User A", email, "SenhaForte@123");
+        try {
+            IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authController.cadastrar("User B", email, "OutraSenha@123")
+            );
+            assertEquals("Este e-mail já está cadastrado.", ex.getMessage());
+        } finally {
+            usuarioDAO.delete(criado.getId());
+        }
+    }
+
+    @Test
+    void shouldFailUpdateWhenEmailAlreadyInUseByAnotherUser() {
+        String email1 = "user1_" + UUID.randomUUID() + "@saam.com.br";
+        String email2 = "user2_" + UUID.randomUUID() + "@saam.com.br";
+        Usuario user1 = authController.cadastrar("User 1", email1, "SenhaForte@123");
+        Usuario user2 = authController.cadastrar("User 2", email2, "SenhaForte@123");
+
+        try {
+            authController.autenticar(email2, "SenhaForte@123");
+            IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authController.atualizarUsuarioLogado("User 2 Modificado", email1, "SenhaForte@123")
+            );
+            assertEquals("Este e-mail já está cadastrado.", ex.getMessage());
+        } finally {
+            authController.logout();
+            usuarioDAO.delete(user1.getId());
+            usuarioDAO.delete(user2.getId());
+        }
+    }
 }

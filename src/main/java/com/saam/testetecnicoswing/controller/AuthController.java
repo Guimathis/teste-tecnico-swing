@@ -24,6 +24,9 @@ public class AuthController {
 
     public Usuario cadastrar(String nome, String email, String senha) {
         ValidationUtils.validarCadastroUsuario(nome, email, senha);
+        if (usuarioDAO.existsByEmail(email)) {
+            throw new IllegalArgumentException("Este e-mail já está cadastrado.");
+        }
         String senhaHash = PasswordUtils.hashSha256(senha);
         Usuario novo = new Usuario(nome.trim(), email.trim().toLowerCase(), senhaHash);
         return usuarioDAO.insert(novo);
@@ -50,6 +53,9 @@ public class AuthController {
             throw new IllegalArgumentException("O nome é obrigatório.");
         }
         ValidationUtils.validarEmail(email);
+        if (!email.trim().equalsIgnoreCase(logado.getEmail()) && usuarioDAO.existsByEmail(email)) {
+            throw new IllegalArgumentException("Este e-mail já está cadastrado.");
+        }
 
         String senhaHash = (novaSenha == null || novaSenha.isBlank())
             ? logado.getSenha()

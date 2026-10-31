@@ -18,6 +18,8 @@ import java.util.UUID;
  */
 public class UsuarioDAO implements Dao<Usuario> {
 
+    private static final String SQL_STATE_UNIQUE_VIOLATION = "23505";
+
     @Override
     public Usuario insert(Usuario usuario) {
         if (usuario.getId() == null) {
@@ -33,8 +35,8 @@ public class UsuarioDAO implements Dao<Usuario> {
             stmt.executeUpdate();
             return usuario;
         } catch (SQLException e) {
-            if ("23505".equals(e.getSQLState())) {
-                throw new DatabaseException("Este e-mail já está cadastrado.", e);
+            if (SQL_STATE_UNIQUE_VIOLATION.equals(e.getSQLState())) {
+                throw new IllegalArgumentException("Este e-mail já está cadastrado.", e);
             }
             throw new DatabaseException("Erro ao cadastrar usuário no banco de dados.", e);
         }
@@ -73,6 +75,22 @@ public class UsuarioDAO implements Dao<Usuario> {
         }
     }
 
+    public boolean existsByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return false;
+        }
+        String sql = "SELECT 1 FROM usuarios WHERE LOWER(email) = LOWER(?) LIMIT 1";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email.trim());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao verificar existência de e-mail.", e);
+        }
+    }
+
     public Optional<Usuario> selectByEmail(String email) {
         String sql = "SELECT id, nome, email, senha_hash FROM usuarios WHERE LOWER(email) = LOWER(?)";
         try (Connection conn = ConnectionFactory.getConnection();
@@ -100,8 +118,8 @@ public class UsuarioDAO implements Dao<Usuario> {
             stmt.setString(4, usuario.getId().toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            if ("23505".equals(e.getSQLState())) {
-                throw new DatabaseException("Este e-mail já está cadastrado.", e);
+            if (SQL_STATE_UNIQUE_VIOLATION.equals(e.getSQLState())) {
+                throw new IllegalArgumentException("Este e-mail já está cadastrado.", e);
             }
             throw new DatabaseException("Erro ao atualizar usuário.", e);
         }

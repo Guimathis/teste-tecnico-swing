@@ -37,9 +37,13 @@ class UsuarioDAOTest {
             assertTrue(porEmail.isPresent());
             assertEquals("Teste SAAM", porEmail.get().getNome());
 
+            assertTrue(usuarioDAO.existsByEmail(uniqueEmail));
+            assertFalse(usuarioDAO.existsByEmail("inexistente_" + UUID.randomUUID() + "@saam.com.br"));
+
             // Deve rejeitar e-mail duplicado
             Usuario duplicado = new Usuario("Outro", uniqueEmail, PasswordUtils.hashSha256("outra"));
-            assertThrows(DatabaseException.class, () -> usuarioDAO.insert(duplicado));
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> usuarioDAO.insert(duplicado));
+            assertEquals("Este e-mail já está cadastrado.", ex.getMessage());
 
             // Update
             salvo.setNome("Teste SAAM Atualizado");
