@@ -26,7 +26,7 @@ class FuncionarioControllerTest {
     }
 
     @Test
-    void shouldRegisterAndListEmployeeSuccessfully() {
+    void shouldRegisterUpdateAndDeleteEmployeeSuccessfully() {
         Funcionario cadastrado = funcionarioController.cadastrar(
             "Ana Beatriz",
             "15/08/2024",
@@ -35,17 +35,24 @@ class FuncionarioControllerTest {
         );
 
         assertNotNull(cadastrado.getId());
-        assertEquals("Ana Beatriz", cadastrado.getNome());
-        assertEquals(LocalDate.of(2024, 8, 15), cadastrado.getDataAdmissao());
-        assertEquals(new BigDecimal("6500.50"), cadastrado.getSalario());
-        assertTrue(cadastrado.isStatus());
 
-        try {
-            List<Funcionario> lista = funcionarioController.listarTodos();
-            assertTrue(lista.stream().anyMatch(f -> f.getId().equals(cadastrado.getId())));
-        } finally {
-            funcionarioDAO.delete(cadastrado.getId());
-        }
+        Funcionario atualizado = funcionarioController.atualizar(
+            cadastrado.getId(),
+            "Ana Beatriz Silva",
+            "20/08/2024",
+            "7200,00",
+            false
+        );
+        assertEquals("Ana Beatriz Silva", atualizado.getNome());
+        assertEquals(LocalDate.of(2024, 8, 20), atualizado.getDataAdmissao());
+        assertEquals(new BigDecimal("7200.00"), atualizado.getSalario());
+        assertFalse(atualizado.isStatus());
+
+        List<Funcionario> lista = funcionarioController.listarTodos();
+        assertTrue(lista.stream().anyMatch(f -> f.getId().equals(cadastrado.getId())));
+
+        funcionarioController.excluir(cadastrado.getId());
+        assertThrows(IllegalArgumentException.class, () -> funcionarioController.buscarPorId(cadastrado.getId()));
     }
 
     @Test

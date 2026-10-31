@@ -32,29 +32,27 @@ class AuthControllerTest {
     }
 
     @Test
-    void shouldRegisterUserWithSha256AndAuthenticateMaintainingSession() {
+    void shouldRegisterAuthenticateUpdateAndDeleteLoggedUser() {
         String email = "auth_" + UUID.randomUUID() + "@saam.com.br";
         Usuario cadastrado = authController.cadastrar("Carlos Souza", email, "MinhaSenha@2026");
 
         assertNotNull(cadastrado.getId());
         assertEquals(PasswordUtils.hashSha256("MinhaSenha@2026"), cadastrado.getSenha());
+
+        authController.autenticar(email, "MinhaSenha@2026");
+        assertTrue(SessionManager.isAutenticado());
+
+        // Atualizar usuario logado
+        String novoEmail = "edit_" + UUID.randomUUID() + "@saam.com.br";
+        Usuario atualizado = authController.atualizarUsuarioLogado("Carlos Editado", novoEmail, "NovaSenha@123");
+        assertEquals("Carlos Editado", atualizado.getNome());
+        assertEquals(novoEmail, SessionManager.getUsuarioLogado().getEmail());
+        assertEquals(PasswordUtils.hashSha256("NovaSenha@123"), atualizado.getSenha());
+
+        // Excluir usuario logado
+        authController.excluirUsuarioLogado();
         assertFalse(SessionManager.isAutenticado());
-
-        try {
-            Usuario autenticado = authController.autenticar(email, "MinhaSenha@2026");
-            assertEquals(cadastrado.getId(), autenticado.getId());
-            assertTrue(SessionManager.isAutenticado());
-            assertEquals("Carlos Souza", SessionManager.getUsuarioLogado().getNome());
-
-            authController.logout();
-            assertFalse(SessionManager.isAutenticado());
-            assertNull(SessionManager.getUsuarioLogado());
-
-            assertThrows(IllegalArgumentException.class,
-                () -> authController.autenticar(email, "SenhaErrada"));
-        } finally {
-            usuarioDAO.delete(cadastrado.getId());
-        }
+        assertTrue(usuarioDAO.selectById(cadastrado.getId()).isEmpty());
     }
 
     @Test

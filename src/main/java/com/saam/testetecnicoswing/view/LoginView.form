@@ -30,13 +30,13 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="lblTitulo" min="-2" max="-2" attributes="0"/>
                   <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtEmail" alignment="0" pref="320" max="32767" attributes="0"/>
+                  <Component id="txtEmail" alignment="0" max="32767" attributes="0"/>
                   <Component id="lblSenha" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="txtSenha" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="btnCadastrar" min="-2" pref="120" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnEntrar" min="-2" pref="120" max="-2" attributes="0"/>
+                      <Component id="btnCadastrar" min="-2" pref="165" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="btnEntrar" min="-2" pref="165" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace pref="24" max="32767" attributes="0"/>
@@ -58,8 +58,8 @@
               <Component id="txtSenha" min="-2" pref="30" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnEntrar" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
-                  <Component id="btnCadastrar" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                  <Component id="btnEntrar" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                  <Component id="btnCadastrar" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="20" max="32767" attributes="0"/>
           </Group>
@@ -91,6 +91,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnEntrar">
       <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/icons/confirma24.png"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Entrar"/>
       </Properties>
       <Events>
@@ -99,6 +102,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnCadastrar">
       <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/icons/adiciona24.png"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Criar Conta"/>
       </Properties>
       <Events>

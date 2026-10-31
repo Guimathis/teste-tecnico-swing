@@ -1,16 +1,15 @@
 package com.saam.testetecnicoswing.view;
 
-import com.saam.testetecnicoswing.controller.AuthController;
 import com.saam.testetecnicoswing.controller.FuncionarioController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
 import com.saam.testetecnicoswing.model.Funcionario;
-import com.saam.testetecnicoswing.model.Usuario;
-import com.saam.testetecnicoswing.util.SessionManager;
+import com.saam.testetecnicoswing.util.IconUtils;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import javax.swing.JOptionPane;
+import java.util.UUID;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,26 +22,15 @@ public class FuncionarioView extends javax.swing.JFrame {
     private static final NumberFormat CURRENCY_FMT = NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
     private final FuncionarioController funcionarioController;
-    private final AuthController authController;
 
     /**
      * Creates new form FuncionarioView
      */
     public FuncionarioView() {
         this.funcionarioController = new FuncionarioController();
-        this.authController = new AuthController();
         initComponents();
-        configurarSessaoUsuario();
+        tblFuncionarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         carregarTabelaFuncionarios();
-    }
-
-    private void configurarSessaoUsuario() {
-        Usuario logado = SessionManager.getUsuarioLogado();
-        if (logado != null) {
-            lblUsuarioLogado.setText("Usuário: " + logado.getNome());
-        } else {
-            lblUsuarioLogado.setText("Usuário: Não identificado");
-        }
     }
 
     private void carregarTabelaFuncionarios() {
@@ -60,21 +48,20 @@ public class FuncionarioView extends javax.swing.JFrame {
                 });
             }
         } catch (DatabaseException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Erro ao Carregar Funcionários",
-                JOptionPane.ERROR_MESSAGE
-            );
+            IconUtils.showError(this, ex.getMessage(), "Erro ao Carregar Funcionários");
         }
     }
 
-    private void limparCampos() {
-        txtNome.setText("");
-        txtDataAdmissao.setValue(null);
-        txtSalario.setValue(null);
-        chkStatus.setSelected(true);
-        txtNome.requestFocus();
+    private UUID obterIdSelecionado() {
+        int selectedRow = tblFuncionarios.getSelectedRow();
+        if (selectedRow < 0) {
+            return null;
+        }
+        Object value = tblFuncionarios.getValueAt(selectedRow, 0);
+        if (value instanceof UUID uuid) {
+            return uuid;
+        }
+        return UUID.fromString(value.toString());
     }
 
     /**
@@ -87,68 +74,18 @@ public class FuncionarioView extends javax.swing.JFrame {
     private void initComponents() {
 
         lblTitulo = new javax.swing.JLabel();
-        lblUsuarioLogado = new javax.swing.JLabel();
-        btnSair = new javax.swing.JButton();
-        lblNome = new javax.swing.JLabel();
-        txtNome = new javax.swing.JTextField();
-        lblDataAdmissao = new javax.swing.JLabel();
-        txtDataAdmissao = new javax.swing.JFormattedTextField();
-        lblSalario = new javax.swing.JLabel();
-        txtSalario = new javax.swing.JFormattedTextField();
-        lblStatus = new javax.swing.JLabel();
-        chkStatus = new javax.swing.JCheckBox();
-        btnLimpar = new javax.swing.JButton();
-        btnCadastrar = new javax.swing.JButton();
         scrollFuncionarios = new javax.swing.JScrollPane();
         tblFuncionarios = new javax.swing.JTable();
+        btnVoltar = new javax.swing.JButton();
+        btnNovo = new javax.swing.JButton();
+        btnAlterar = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("SAAM Auditoria - Cadastro de Funcionários");
+        setTitle("SAAM Auditoria - Funcionários");
 
         lblTitulo.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        lblTitulo.setText("Cadastro de Funcionários");
-
-        lblUsuarioLogado.setText("Usuário:");
-
-        btnSair.setText("Sair");
-        btnSair.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSairActionPerformed(evt);
-            }
-        });
-
-        lblNome.setText("Nome:");
-
-        lblDataAdmissao.setText("Data Admissão (dd/MM/aaaa):");
-
-        try {
-            txtDataAdmissao.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-
-        lblSalario.setText("Salário (R$):");
-
-        txtSalario.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
-
-        lblStatus.setText("Status:");
-
-        chkStatus.setSelected(true);
-        chkStatus.setText("Ativo");
-
-        btnLimpar.setText("Limpar");
-        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimparActionPerformed(evt);
-            }
-        });
-
-        btnCadastrar.setText("Cadastrar");
-        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrarActionPerformed(evt);
-            }
-        });
+        lblTitulo.setText("Funcionários Cadastrados");
 
         tblFuncionarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -159,7 +96,7 @@ public class FuncionarioView extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
@@ -175,6 +112,38 @@ public class FuncionarioView extends javax.swing.JFrame {
         });
         scrollFuncionarios.setViewportView(tblFuncionarios);
 
+        btnVoltar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Undo24.png"))); // NOI18N
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+
+        btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/adiciona24.png"))); // NOI18N
+        btnNovo.setText("Novo");
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
+
+        btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Edit24.png"))); // NOI18N
+        btnAlterar.setText("Alterar");
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarActionPerformed(evt);
+            }
+        });
+
+        btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/lixeira24.png"))); // NOI18N
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -182,62 +151,33 @@ public class FuncionarioView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollFuncionarios, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
+                    .addComponent(scrollFuncionarios, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitulo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblUsuarioLogado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblNome)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblDataAdmissao)
-                            .addComponent(txtDataAdmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSalario)
-                            .addComponent(txtSalario, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblStatus)
-                            .addComponent(chkStatus)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(lblTitulo)
+                .addGap(18, 18, 18)
+                .addComponent(scrollFuncionarios, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTitulo)
-                    .addComponent(lblUsuarioLogado)
-                    .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblNome)
-                    .addComponent(lblDataAdmissao)
-                    .addComponent(lblSalario)
-                    .addComponent(lblStatus))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataAdmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chkStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(scrollFuncionarios, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20))
         );
 
@@ -245,64 +185,56 @@ public class FuncionarioView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        String nome = txtNome.getText();
-        String dataStr = txtDataAdmissao.getText();
-        String salarioStr = txtSalario.getText();
-        boolean status = chkStatus.isSelected();
-
-        try {
-            funcionarioController.cadastrar(nome, dataStr, salarioStr, status);
-            JOptionPane.showMessageDialog(
-                this,
-                "Funcionário cadastrado com sucesso!",
-                "Sucesso",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-            limparCampos();
-            carregarTabelaFuncionarios();
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Dados Inválidos",
-                JOptionPane.WARNING_MESSAGE
-            );
-        } catch (DatabaseException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Erro no Banco de Dados",
-                JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }//GEN-LAST:event_btnCadastrarActionPerformed
-
-    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
-        limparCampos();
-    }//GEN-LAST:event_btnLimparActionPerformed
-
-    private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
-        authController.logout();
-        new LoginView().setVisible(true);
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        new TelaPrincipalView().setVisible(true);
         dispose();
-    }//GEN-LAST:event_btnSairActionPerformed
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+        new FuncionarioFormView(null).setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
+        UUID id = obterIdSelecionado();
+        if (id == null) {
+            IconUtils.showError(this, "Selecione um funcionário na tabela para alterar.", "Atenção");
+            return;
+        }
+        try {
+            Funcionario selecionado = funcionarioController.buscarPorId(id);
+            new FuncionarioFormView(selecionado).setVisible(true);
+            dispose();
+        } catch (IllegalArgumentException | DatabaseException ex) {
+            IconUtils.showError(this, ex.getMessage(), "Erro ao Abrir Funcionário");
+        }
+    }//GEN-LAST:event_btnAlterarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        UUID id = obterIdSelecionado();
+        if (id == null) {
+            IconUtils.showError(this, "Selecione um funcionário na tabela para excluir.", "Atenção");
+            return;
+        }
+        if (!IconUtils.showConfirm(this, "Deseja realmente excluir o funcionário selecionado?", "Confirmar Exclusão")) {
+            return;
+        }
+        try {
+            funcionarioController.excluir(id);
+            IconUtils.showInfo(this, "Funcionário excluído com sucesso!", "Sucesso");
+            carregarTabelaFuncionarios();
+        } catch (DatabaseException ex) {
+            IconUtils.showError(this, ex.getMessage(), "Erro ao Excluir Funcionário");
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCadastrar;
-    private javax.swing.JButton btnLimpar;
-    private javax.swing.JButton btnSair;
-    private javax.swing.JCheckBox chkStatus;
-    private javax.swing.JFormattedTextField txtDataAdmissao;
-    private javax.swing.JLabel lblDataAdmissao;
-    private javax.swing.JLabel lblNome;
-    private javax.swing.JLabel lblSalario;
-    private javax.swing.JLabel lblStatus;
+    private javax.swing.JButton btnAlterar;
+    private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnNovo;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel lblTitulo;
-    private javax.swing.JLabel lblUsuarioLogado;
     private javax.swing.JScrollPane scrollFuncionarios;
     private javax.swing.JTable tblFuncionarios;
-    private javax.swing.JTextField txtNome;
-    private javax.swing.JFormattedTextField txtSalario;
     // End of variables declaration//GEN-END:variables
 }

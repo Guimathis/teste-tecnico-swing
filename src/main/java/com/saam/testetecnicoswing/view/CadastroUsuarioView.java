@@ -2,7 +2,7 @@ package com.saam.testetecnicoswing.view;
 
 import com.saam.testetecnicoswing.controller.AuthController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
-import javax.swing.JOptionPane;
+import com.saam.testetecnicoswing.util.IconUtils;
 
 /**
  *
@@ -52,6 +52,7 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
 
         lblSenha.setText("Senha:");
 
+        btnCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/confirma24.png"))); // NOI18N
         btnCadastrar.setText("Cadastrar");
         btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -59,6 +60,7 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
             }
         });
 
+        btnVoltar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Undo24.png"))); // NOI18N
         btnVoltar.setText("Voltar");
         btnVoltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -75,15 +77,15 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblTitulo)
                     .addComponent(lblNome)
-                    .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(txtNome)
                     .addComponent(lblEmail)
                     .addComponent(txtEmail)
                     .addComponent(lblSenha)
                     .addComponent(txtSenha)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -105,8 +107,8 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
                 .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -121,28 +123,13 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
 
         try {
             authController.cadastrar(nome, email, senha);
-            JOptionPane.showMessageDialog(
-                this,
-                "Usuário cadastrado com sucesso!",
-                "Sucesso",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+            IconUtils.showInfo(this, "Usuário cadastrado com sucesso!", "Sucesso");
             new LoginView().setVisible(true);
             dispose();
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Dados Inválidos",
-                JOptionPane.WARNING_MESSAGE
-            );
+            IconUtils.showError(this, ex.getMessage(), "Dados Inválidos");
         } catch (DatabaseException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Erro no Banco de Dados",
-                JOptionPane.ERROR_MESSAGE
-            );
+            IconUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
         }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 

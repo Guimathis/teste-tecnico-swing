@@ -41,6 +41,40 @@ public class AuthController {
         return autenticado;
     }
 
+    public Usuario atualizarUsuarioLogado(String nome, String email, String novaSenha) {
+        Usuario logado = SessionManager.getUsuarioLogado();
+        if (logado == null) {
+            throw new IllegalStateException("Nenhum usuário autenticado na sessão.");
+        }
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("O nome é obrigatório.");
+        }
+        ValidationUtils.validarEmail(email);
+
+        String senhaHash = (novaSenha == null || novaSenha.isBlank())
+            ? logado.getSenha()
+            : PasswordUtils.hashSha256(novaSenha);
+
+        Usuario atualizado = new Usuario(
+            logado.getId(),
+            nome.trim(),
+            email.trim().toLowerCase(),
+            senhaHash
+        );
+        usuarioDAO.update(atualizado);
+        SessionManager.login(atualizado);
+        return atualizado;
+    }
+
+    public void excluirUsuarioLogado() {
+        Usuario logado = SessionManager.getUsuarioLogado();
+        if (logado == null) {
+            throw new IllegalStateException("Nenhum usuário autenticado na sessão.");
+        }
+        usuarioDAO.delete(logado.getId());
+        SessionManager.logout();
+    }
+
     public void logout() {
         SessionManager.logout();
     }

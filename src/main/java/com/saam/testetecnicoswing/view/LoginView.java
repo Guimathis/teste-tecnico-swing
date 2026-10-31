@@ -2,8 +2,7 @@ package com.saam.testetecnicoswing.view;
 
 import com.saam.testetecnicoswing.controller.AuthController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
-import com.saam.testetecnicoswing.model.Usuario;
-import javax.swing.JOptionPane;
+import com.saam.testetecnicoswing.util.IconUtils;
 
 /**
  *
@@ -50,6 +49,7 @@ public class LoginView extends javax.swing.JFrame {
 
         lblSenha.setText("Senha:");
 
+        btnEntrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/confirma24.png"))); // NOI18N
         btnEntrar.setText("Entrar");
         btnEntrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -57,6 +57,7 @@ public class LoginView extends javax.swing.JFrame {
             }
         });
 
+        btnCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/adiciona24.png"))); // NOI18N
         btnCadastrar.setText("Criar Conta");
         btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -73,13 +74,13 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblTitulo)
                     .addComponent(lblEmail)
-                    .addComponent(txtEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(txtEmail)
                     .addComponent(lblSenha)
                     .addComponent(txtSenha)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -97,8 +98,8 @@ public class LoginView extends javax.swing.JFrame {
                 .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -111,29 +112,13 @@ public class LoginView extends javax.swing.JFrame {
         String senha = new String(txtSenha.getPassword());
 
         try {
-            Usuario usuarioLogado = authController.autenticar(email, senha);
-            JOptionPane.showMessageDialog(
-                this,
-                "Bem-vindo(a), " + usuarioLogado.getNome() + "!",
-                "Login Realizado",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-            new FuncionarioView().setVisible(true);
+            authController.autenticar(email, senha);
+            new TelaPrincipalView().setVisible(true);
             dispose();
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Falha na Autenticação",
-                JOptionPane.WARNING_MESSAGE
-            );
+            IconUtils.showError(this, ex.getMessage(), "Falha na Autenticação");
         } catch (DatabaseException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Erro no Banco de Dados",
-                JOptionPane.ERROR_MESSAGE
-            );
+            IconUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
         }
     }//GEN-LAST:event_btnEntrarActionPerformed
 

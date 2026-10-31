@@ -6,6 +6,7 @@ import com.saam.testetecnicoswing.util.ValidationUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -30,6 +31,31 @@ public class FuncionarioController {
 
         Funcionario novo = new Funcionario(nome.trim(), dataAdmissao, salario, status);
         return funcionarioDAO.insert(novo);
+    }
+
+    public Funcionario atualizar(UUID id, String nome, String dataAdmissaoStr, String salarioStr, boolean status) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID do funcionário é obrigatório para alteração.");
+        }
+        LocalDate dataAdmissao = ValidationUtils.parseData(dataAdmissaoStr);
+        BigDecimal salario = ValidationUtils.parseSalario(salarioStr);
+        ValidationUtils.validarFuncionario(nome, dataAdmissao, salario);
+
+        Funcionario existente = new Funcionario(id, nome.trim(), dataAdmissao, salario, status);
+        funcionarioDAO.update(existente);
+        return existente;
+    }
+
+    public void excluir(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Selecione um funcionário para excluir.");
+        }
+        funcionarioDAO.delete(id);
+    }
+
+    public Funcionario buscarPorId(UUID id) {
+        return funcionarioDAO.selectById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado."));
     }
 
     public List<Funcionario> listarTodos() {
