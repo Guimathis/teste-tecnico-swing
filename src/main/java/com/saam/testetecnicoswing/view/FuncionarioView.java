@@ -3,7 +3,7 @@ package com.saam.testetecnicoswing.view;
 import com.saam.testetecnicoswing.controller.FuncionarioController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
 import com.saam.testetecnicoswing.model.Funcionario;
-import com.saam.testetecnicoswing.util.IconUtils;
+import com.saam.testetecnicoswing.util.DialogUtils;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -48,7 +48,7 @@ public class FuncionarioView extends javax.swing.JFrame {
                 });
             }
         } catch (DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro ao Carregar Funcionários");
+            DialogUtils.showError(this, ex.getMessage(), "Erro ao Carregar Funcionários");
         }
     }
 
@@ -198,7 +198,7 @@ public class FuncionarioView extends javax.swing.JFrame {
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         UUID id = obterIdSelecionado();
         if (id == null) {
-            IconUtils.showError(this, "Selecione um funcionário na tabela para alterar.", "Atenção");
+            DialogUtils.showError(this, "Selecione um funcionário na tabela para alterar.", "Atenção");
             return;
         }
         try {
@@ -206,25 +206,25 @@ public class FuncionarioView extends javax.swing.JFrame {
             new FuncionarioFormView(selecionado).setVisible(true);
             dispose();
         } catch (IllegalArgumentException | DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro ao Abrir Funcionário");
+            DialogUtils.showError(this, ex.getMessage(), "Erro ao Abrir Funcionário");
         }
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         UUID id = obterIdSelecionado();
         if (id == null) {
-            IconUtils.showError(this, "Selecione um funcionário na tabela para excluir.", "Atenção");
+            DialogUtils.showError(this, "Selecione um funcionário na tabela para excluir.", "Atenção");
             return;
         }
-        if (!IconUtils.showConfirm(this, "Deseja realmente excluir o funcionário selecionado?", "Confirmar Exclusão")) {
+        if (!DialogUtils.showConfirm(this, "Deseja realmente excluir o funcionário selecionado?", "Confirmar Exclusão")) {
             return;
         }
         try {
             funcionarioController.excluir(id);
-            IconUtils.showInfo(this, "Funcionário excluído com sucesso!", "Sucesso");
+            DialogUtils.showInfo(this, "Funcionário excluído com sucesso!", "Sucesso");
             carregarTabelaFuncionarios();
         } catch (DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro ao Excluir Funcionário");
+            DialogUtils.showError(this, ex.getMessage(), "Erro ao Excluir Funcionário");
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 

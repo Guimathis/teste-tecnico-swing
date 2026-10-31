@@ -2,7 +2,7 @@ package com.saam.testetecnicoswing.view;
 
 import com.saam.testetecnicoswing.controller.AuthController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
-import com.saam.testetecnicoswing.util.IconUtils;
+import com.saam.testetecnicoswing.util.DialogUtils;
 
 /**
  *
@@ -116,9 +116,9 @@ public class LoginView extends javax.swing.JFrame {
             new TelaPrincipalView().setVisible(true);
             dispose();
         } catch (IllegalArgumentException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Falha na Autenticação");
+            DialogUtils.showError(this, ex.getMessage(), "Falha na Autenticação");
         } catch (DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
+            DialogUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
         }
     }//GEN-LAST:event_btnEntrarActionPerformed
 

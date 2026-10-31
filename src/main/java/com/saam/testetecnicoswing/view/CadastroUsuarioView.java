@@ -2,7 +2,7 @@ package com.saam.testetecnicoswing.view;
 
 import com.saam.testetecnicoswing.controller.AuthController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
-import com.saam.testetecnicoswing.util.IconUtils;
+import com.saam.testetecnicoswing.util.DialogUtils;
 
 /**
  *
@@ -123,13 +123,13 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
 
         try {
             authController.cadastrar(nome, email, senha);
-            IconUtils.showInfo(this, "Usuário cadastrado com sucesso!", "Sucesso");
+            DialogUtils.showInfo(this, "Usuário cadastrado com sucesso!", "Sucesso");
             new LoginView().setVisible(true);
             dispose();
         } catch (IllegalArgumentException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Dados Inválidos");
+            DialogUtils.showError(this, ex.getMessage(), "Dados Inválidos");
         } catch (DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
+            DialogUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
         }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 

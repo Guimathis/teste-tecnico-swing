@@ -3,7 +3,7 @@ package com.saam.testetecnicoswing.view;
 import com.saam.testetecnicoswing.controller.FuncionarioController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
 import com.saam.testetecnicoswing.model.Funcionario;
-import com.saam.testetecnicoswing.util.IconUtils;
+import com.saam.testetecnicoswing.util.DialogUtils;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -228,17 +228,17 @@ public class FuncionarioFormView extends javax.swing.JFrame {
         try {
             if (funcionarioEmEdicao == null) {
                 funcionarioController.cadastrar(nome, dataStr, salarioStr, status);
-                IconUtils.showInfo(this, "Funcionário cadastrado com sucesso!", "Sucesso");
+                DialogUtils.showInfo(this, "Funcionário cadastrado com sucesso!", "Sucesso");
             } else {
                 funcionarioController.atualizar(funcionarioEmEdicao.getId(), nome, dataStr, salarioStr, status);
-                IconUtils.showInfo(this, "Funcionário atualizado com sucesso!", "Sucesso");
+                DialogUtils.showInfo(this, "Funcionário atualizado com sucesso!", "Sucesso");
             }
             new FuncionarioView().setVisible(true);
             dispose();
         } catch (IllegalArgumentException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Dados Inválidos");
+            DialogUtils.showError(this, ex.getMessage(), "Dados Inválidos");
         } catch (DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
+            DialogUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 

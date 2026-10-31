@@ -3,7 +3,7 @@ package com.saam.testetecnicoswing.view;
 import com.saam.testetecnicoswing.controller.AuthController;
 import com.saam.testetecnicoswing.exception.DatabaseException;
 import com.saam.testetecnicoswing.model.Usuario;
-import com.saam.testetecnicoswing.util.IconUtils;
+import com.saam.testetecnicoswing.util.DialogUtils;
 import com.saam.testetecnicoswing.util.SessionManager;
 
 /**
@@ -145,16 +145,16 @@ public class PerfilUsuarioView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeletarActionPerformed
-        if (!IconUtils.showConfirm(this, "Deseja realmente excluir sua conta?", "Confirmar Exclusão")) {
+        if (!DialogUtils.showConfirm(this, "Deseja realmente excluir sua conta?", "Confirmar Exclusão")) {
             return;
         }
         try {
             authController.excluirUsuarioLogado();
-            IconUtils.showInfo(this, "Sua conta foi excluída com sucesso.", "Conta Excluída");
+            DialogUtils.showInfo(this, "Sua conta foi excluída com sucesso.", "Conta Excluída");
             new LoginView().setVisible(true);
             dispose();
         } catch (DatabaseException | IllegalStateException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro ao Excluir Conta");
+            DialogUtils.showError(this, ex.getMessage(), "Erro ao Excluir Conta");
         }
     }//GEN-LAST:event_btnDeletarActionPerformed
 
@@ -165,13 +165,13 @@ public class PerfilUsuarioView extends javax.swing.JFrame {
 
         try {
             authController.atualizarUsuarioLogado(nome, email, novaSenha);
-            IconUtils.showInfo(this, "Dados do usuário atualizados com sucesso!", "Sucesso");
+            DialogUtils.showInfo(this, "Dados do usuário atualizados com sucesso!", "Sucesso");
             new TelaPrincipalView().setVisible(true);
             dispose();
         } catch (IllegalArgumentException | IllegalStateException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Dados Inválidos");
+            DialogUtils.showError(this, ex.getMessage(), "Dados Inválidos");
         } catch (DatabaseException ex) {
-            IconUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
+            DialogUtils.showError(this, ex.getMessage(), "Erro no Banco de Dados");
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
