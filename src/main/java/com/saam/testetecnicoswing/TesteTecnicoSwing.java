@@ -40,5 +40,9 @@ public class TesteTecnicoSwing {
             }
         } catch (Exception ignored) {
         }
+        UIManager.put("OptionPane.yesButtonText", "Sim");
+        UIManager.put("OptionPane.noButtonText", "Não");
+        UIManager.put("OptionPane.cancelButtonText", "Cancelar");
+        UIManager.put("OptionPane.okButtonText", "OK");
     }
 }

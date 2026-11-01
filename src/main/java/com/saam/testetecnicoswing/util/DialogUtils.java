@@ -9,6 +9,9 @@ import javax.swing.JOptionPane;
  */
 public final class DialogUtils {
 
+    // Constante para substituir texto em inglês dos botões no dialog
+    private static final Object[] SIM_NAO_OPTIONS = {"Sim", "Não"};
+
     private DialogUtils() {
     }
 
@@ -33,13 +36,15 @@ public final class DialogUtils {
     }
 
     public static boolean showConfirm(Component parent, String message, String title) {
-        int result = JOptionPane.showConfirmDialog(
+        int result = JOptionPane.showOptionDialog(
             parent,
             message,
             title,
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE,
-            IconUtils.load(IconUtils.CONFIRMA)
+            IconUtils.load(IconUtils.DELETA_48),
+            SIM_NAO_OPTIONS,
+            SIM_NAO_OPTIONS[0]
         );
         return result == JOptionPane.YES_OPTION;
     }
