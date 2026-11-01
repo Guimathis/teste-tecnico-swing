@@ -1,0 +1,2 @@
+CREATE DATABASE saam_db
+    ENCODING 'UTF8';

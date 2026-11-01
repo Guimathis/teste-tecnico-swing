@@ -28,7 +28,7 @@ public class UsuarioDAO implements Dao<Usuario> {
         String sql = "INSERT INTO usuarios (id, nome, email, senha_hash) VALUES (?, ?, ?, ?)";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, usuario.getId().toString());
+            stmt.setObject(1, usuario.getId());
             stmt.setString(2, usuario.getNome().trim());
             stmt.setString(3, usuario.getEmail().trim().toLowerCase());
             stmt.setString(4, usuario.getSenha());
@@ -63,7 +63,7 @@ public class UsuarioDAO implements Dao<Usuario> {
         String sql = "SELECT id, nome, email, senha_hash FROM usuarios WHERE id = ?";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id.toString());
+            stmt.setObject(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapRow(rs));
@@ -115,7 +115,7 @@ public class UsuarioDAO implements Dao<Usuario> {
             stmt.setString(1, usuario.getNome().trim());
             stmt.setString(2, usuario.getEmail().trim().toLowerCase());
             stmt.setString(3, usuario.getSenha());
-            stmt.setString(4, usuario.getId().toString());
+            stmt.setObject(4, usuario.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             if (SQL_STATE_UNIQUE_VIOLATION.equals(e.getSQLState())) {
@@ -130,7 +130,7 @@ public class UsuarioDAO implements Dao<Usuario> {
         String sql = "DELETE FROM usuarios WHERE id = ?";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id.toString());
+            stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Erro ao excluir usuário.", e);
@@ -139,7 +139,7 @@ public class UsuarioDAO implements Dao<Usuario> {
 
     private Usuario mapRow(ResultSet rs) throws SQLException {
         return new Usuario(
-            UUID.fromString(rs.getString("id")),
+            rs.getObject("id", UUID.class),
             rs.getString("nome"),
             rs.getString("email"),
             rs.getString("senha_hash")

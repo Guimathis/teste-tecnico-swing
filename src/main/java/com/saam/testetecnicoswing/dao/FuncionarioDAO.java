@@ -27,7 +27,7 @@ public class FuncionarioDAO implements Dao<Funcionario> {
         String sql = "INSERT INTO funcionarios (id, nome, data_admissao, salario, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, funcionario.getId().toString());
+            stmt.setObject(1, funcionario.getId());
             stmt.setString(2, funcionario.getNome().trim());
             stmt.setDate(3, Date.valueOf(funcionario.getDataAdmissao()));
             stmt.setBigDecimal(4, funcionario.getSalario());
@@ -60,7 +60,7 @@ public class FuncionarioDAO implements Dao<Funcionario> {
         String sql = "SELECT id, nome, data_admissao, salario, status FROM funcionarios WHERE id = ?";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id.toString());
+            stmt.setObject(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapRow(rs));
@@ -81,7 +81,7 @@ public class FuncionarioDAO implements Dao<Funcionario> {
             stmt.setDate(2, Date.valueOf(funcionario.getDataAdmissao()));
             stmt.setBigDecimal(3, funcionario.getSalario());
             stmt.setBoolean(4, funcionario.isStatus());
-            stmt.setString(5, funcionario.getId().toString());
+            stmt.setObject(5, funcionario.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Erro ao atualizar funcionário.", e);
@@ -93,7 +93,7 @@ public class FuncionarioDAO implements Dao<Funcionario> {
         String sql = "DELETE FROM funcionarios WHERE id = ?";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id.toString());
+            stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Erro ao excluir funcionário.", e);
@@ -102,7 +102,7 @@ public class FuncionarioDAO implements Dao<Funcionario> {
 
     private Funcionario mapRow(ResultSet rs) throws SQLException {
         return new Funcionario(
-            UUID.fromString(rs.getString("id")),
+            rs.getObject("id", UUID.class),
             rs.getString("nome"),
             rs.getDate("data_admissao").toLocalDate(),
             rs.getBigDecimal("salario"),
