@@ -23,6 +23,7 @@ public class FuncionarioFormView extends javax.swing.JFrame {
 
     /**
      * Creates new form FuncionarioFormView
+     * @param funcionarioEmEdicao
      */
     public FuncionarioFormView(Funcionario funcionarioEmEdicao) {
         this.funcionarioController = new FuncionarioController();
