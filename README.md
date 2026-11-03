@@ -6,6 +6,8 @@ Aplicação desktop desenvolvida como parte de um teste prático para demonstrar
 
 Este projeto foi estruturado seguindo práticas da arquitetura **MVC** e padrão **DAO**, garantindo manutenibilidade, separação de responsabilidades e facilidade de evolução.
 
+Autor: Guilherme Mathias
+
 ## Funcionalidades
 
 ### Tela de Login
